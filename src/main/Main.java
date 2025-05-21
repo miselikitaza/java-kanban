@@ -13,7 +13,8 @@ public class Main {
         TaskManager taskManager = new TaskManager();
 
         //Создаем первую задачу:
-        Task washingMachine = new Task("Стиральная машина", "подключить стиральную машину", TaskStatus.NEW);
+        Task washingMachine = new Task("Стиральная машина", "подключить стиральную машину",
+                TaskStatus.NEW);
         taskManager.createTask(washingMachine);
 
         //Создаем вторую задачу:

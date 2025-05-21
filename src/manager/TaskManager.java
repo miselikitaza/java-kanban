@@ -95,11 +95,13 @@ public class TaskManager {
     }
 
     public Subtask createSubtask(Subtask subtask) {
-        subtask.setId(generateId());
-        subtasks.put(id, subtask);
-        Epic epic = epics.get(subtask.getEpicId());
-        epic.addSubtasks(id);
-        updateEpicStatus(epic.getId());
+        if (epics.containsKey(subtask.getEpicId())) {
+            subtask.setId(generateId());
+            subtasks.put(id, subtask);
+            Epic epic = epics.get(subtask.getEpicId());
+            epic.addSubtasks(id);
+            updateEpicStatus(epic.getId());
+        }
         return subtask;
     }
 
