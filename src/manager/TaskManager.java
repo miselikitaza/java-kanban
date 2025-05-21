@@ -39,7 +39,9 @@ public class TaskManager {
     }
 
     public Task updateTask(Task task) {
-        tasks.put(task.getId(), task);
+        if (tasks.containsKey(task.getId())) {
+            tasks.put(task.getId(), task);
+        }
         return task;
     }
 
@@ -67,9 +69,10 @@ public class TaskManager {
     }
 
     public Epic updateEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
-        updateEpicStatus(epic.getId());
-        return epic;
+        if (epics.containsKey(epic.getId())) {
+            epics.put(epic.getId(), epic);
+            updateEpicStatus(epic.getId());
+        } return epic;
     }
 
     public void deleteEpicById(int id) {
