@@ -112,8 +112,10 @@ public class TaskManager {
     }
 
     public Subtask updateSubtask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
-        updateEpicStatus(subtask.getEpicId());
+        if (subtasks.containsKey(subtask.getId())) {
+            subtasks.put(subtask.getId(), subtask);
+            updateEpicStatus(subtask.getEpicId());
+        }
         return subtask;
     }
 
