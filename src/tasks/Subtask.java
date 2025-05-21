@@ -1,6 +1,6 @@
 package tasks;
 
-public class Subtask extends tasks.Task {
+public class Subtask extends Task {
 
     private final int epicId;
 
