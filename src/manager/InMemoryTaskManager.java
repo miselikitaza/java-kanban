@@ -28,8 +28,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task createTask(Task task) {
-        task.setId(generateId());
-        tasks.put(id, task);
+        if (task.getId() == 0) {
+            task.setId(generateId());
+            tasks.put(id, task);
+        } else {
+         updateTask(task);
+        }
         return task;
     }
 
