@@ -15,6 +15,5 @@ class TaskTest {
         Task taskTwo = new Task(taskOne.getId(), "Зал", "попрыгать на скакалке", TaskStatus.NEW);
         taskManager.createTask(taskTwo);
         Assertions.assertEquals(taskOne, taskTwo);
-        System.out.println(taskManager.getAllTasks());
     }
 }
