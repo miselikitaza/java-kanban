@@ -17,4 +17,12 @@ class EpicTest {
         taskManager.createEpic(epicTwo);
         assertEquals(epicOne, epicTwo);
     }
+
+    @Test
+    public void ShouldReturnFalseWhenAddEpicToItself() {
+        Epic epic = new Epic("Боня", "подготовить собаку к соревнованиям");
+        taskManager.createEpic(epic);
+        epic.addSubtasks(epic.getId());
+        assertFalse(epic.getSubtasks().contains(epic.getId()));
+    }
 }
