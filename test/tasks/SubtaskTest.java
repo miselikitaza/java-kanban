@@ -21,4 +21,19 @@ class SubtaskTest {
         taskManager.createSubtask(subtaskTwo);
         assertEquals(subtaskOne, subtaskTwo);
     }
+
+    @Test
+    public void subtaskCannotReferenceItselfAsEpic() {
+        Epic epic = new Epic("Музыкальная школа", "Подготовиться к новому учебному году");
+        taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("Одежда для танцев", "купить спортивный купальник",
+                TaskStatus.IN_PROGRESS, epic.getId());
+        taskManager.createSubtask(subtask);
+        Subtask uncorrectSubtask = new Subtask(subtask.getId(), subtask.getName(), subtask.getDescription(),
+                subtask.getStatus(), subtask.getId());
+        taskManager.createSubtask(uncorrectSubtask);
+        assertEquals(1, taskManager.getAllSubtask().size());
+    }
+
+
 }
