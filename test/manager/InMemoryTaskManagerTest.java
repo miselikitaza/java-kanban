@@ -9,6 +9,8 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import javax.swing.plaf.PanelUI;
+
 class InMemoryTaskManagerTest {
 
      InMemoryTaskManager taskManager;
@@ -61,6 +63,42 @@ class InMemoryTaskManagerTest {
     public void canSearchSubtaskById() {
         assertNotNull(taskManager.getSubtaskById(subtask.getId()));
         assertEquals(subtask, taskManager.getSubtaskById(subtask.getId()));
+    }
+
+    @Test
+    public void canDeleteAllTasks() {
+        taskManager.deleteAllTasks();
+        assertTrue(taskManager.getAllTasks().isEmpty());
+    }
+
+    @Test
+    public void canDeleteAllEpics() {
+        taskManager.deleteAllEpics();
+        assertTrue(taskManager.getAllEpics().isEmpty());
+    }
+
+    @Test
+    public void canDeleteAllSubtasks() {
+        taskManager.deleteAllSubtasks();
+        assertTrue(taskManager.getAllSubtask().isEmpty());
+    }
+
+    @Test
+    public void canDeleteTaskById() {
+        taskManager.deleteTaskById(task.getId());
+        assertFalse(taskManager.getAllTasks().contains(task));
+    }
+
+    @Test
+    public void canDeleteEpicById() {
+        taskManager.deleteEpicById(epic.getId());
+        assertFalse(taskManager.getAllEpics().contains(epic));
+    }
+
+    @Test
+    public void canDeleteSubtaskById() {
+        taskManager.deleteSubtaskById(subtask.getId());
+        assertFalse(taskManager.getAllSubtask().contains(subtask));
     }
 
     @Test
