@@ -2,7 +2,7 @@ package manager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
@@ -11,13 +11,13 @@ import tasks.TaskStatus;
 
 class InMemoryTaskManagerTest {
 
-    static InMemoryTaskManager taskManager;
-    static Task task;
-    static Epic epic;
-    static Subtask subtask;
+     InMemoryTaskManager taskManager;
+     Task task;
+     Epic epic;
+     Subtask subtask;
 
-    @BeforeAll
-    public static void create() {
+    @BeforeEach
+    public void create() {
         taskManager = new InMemoryTaskManager();
         task = new Task("Задача", "Описание", TaskStatus.NEW);
         taskManager.createTask(task);
@@ -74,11 +74,20 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void taskShouldRemainTheSame() {
+    public void taskShouldRemainTheSameAfterAddingToManager() {
         Task taskAfterAdding = taskManager.getTaskById(task.getId());
         assertEquals(task.getId(), taskAfterAdding.getId());
         assertEquals(task.getName(), taskAfterAdding.getName());
         assertEquals(task.getDescription(), taskAfterAdding.getDescription());
         assertEquals(task.getStatus(),taskAfterAdding.getStatus());
+    }
+
+    @Test
+    public void taskShouldRetainThePreviousVersion() {
+        taskManager.addTaskToHistory(task);
+        Task taskAfterAdding = taskManager.getHistory().getFirst();
+        assertEquals(task, taskAfterAdding);
+        assertTrue(taskManager.getAllTasks().contains(task));
+        assertTrue(taskManager.getHistory().contains(task));
     }
 }
