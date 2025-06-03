@@ -62,4 +62,15 @@ class InMemoryTaskManagerTest {
         assertNotNull(taskManager.getSubtaskById(subtask.getId()));
         assertEquals(subtask, taskManager.getSubtaskById(subtask.getId()));
     }
+
+    @Test
+    public void tasksWithDifferentTypesOfIdsDoNotConflict() {
+        Task predefinedTask = new Task(8, "Задача с предопределенным id", "Описание",
+                TaskStatus.IN_PROGRESS);
+        taskManager.createTask(predefinedTask);
+        assertTrue(taskManager.getAllTasks().contains(task));
+        assertTrue(taskManager.getAllTasks().contains(predefinedTask));
+        assertNotEquals(task, predefinedTask);
+    }
+
 }
