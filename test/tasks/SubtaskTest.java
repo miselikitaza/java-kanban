@@ -1,39 +1,42 @@
 package tasks;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import manager.InMemoryTaskManager;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class SubtaskTest {
 
-    InMemoryTaskManager taskManager = new InMemoryTaskManager();
+    static InMemoryTaskManager taskManager;
+    static Epic epic;
+    static Subtask subtask;
+
+    @BeforeAll
+    public static void create() {
+        taskManager = new InMemoryTaskManager();
+        epic = new Epic("Музыкальная школа", "Подготовиться к новому учебному году");
+        taskManager.createEpic(epic);
+        subtask = new Subtask("Одежда для танцев", "купить спортивный купальник",
+                TaskStatus.IN_PROGRESS, epic.getId());
+        taskManager.createSubtask(subtask);
+    }
 
     @Test
     public void shouldBeOneSubtaskWhenIdsAreEqual() {
-        Epic epic = new Epic("Праздничный стол", "организовать закуски");
-        taskManager.createEpic(epic);
-        Subtask subtaskOne = new Subtask("Продукты", "Купить ребрышки",
-                TaskStatus.IN_PROGRESS, epic.getId());
-        taskManager.createSubtask(subtaskOne);
-        Subtask subtaskTwo = new Subtask(subtaskOne.getId(), "Торт", "испечь коржи",
+        Subtask subtaskTwo = new Subtask(subtask.getId(), "Торт", "испечь коржи",
                 TaskStatus.IN_PROGRESS, epic.getId());
         taskManager.createSubtask(subtaskTwo);
-        assertEquals(subtaskOne, subtaskTwo);
+        assertEquals(subtask, subtaskTwo);
     }
 
     @Test
     public void subtaskCannotReferenceItselfAsEpic() {
-        Epic epic = new Epic("Музыкальная школа", "Подготовиться к новому учебному году");
-        taskManager.createEpic(epic);
-        Subtask subtask = new Subtask("Одежда для танцев", "купить спортивный купальник",
-                TaskStatus.IN_PROGRESS, epic.getId());
-        taskManager.createSubtask(subtask);
         Subtask uncorrectSubtask = new Subtask(subtask.getId(), subtask.getName(), subtask.getDescription(),
                 subtask.getStatus(), subtask.getId());
         taskManager.createSubtask(uncorrectSubtask);
+        assertNotEquals(subtask.getEpicId(), uncorrectSubtask.getId());
         assertEquals(1, taskManager.getAllSubtask().size());
+        assertTrue(taskManager.getAllSubtask().contains(subtask));
     }
-
-
 }
