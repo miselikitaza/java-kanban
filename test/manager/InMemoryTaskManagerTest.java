@@ -10,6 +10,7 @@ import tasks.Task;
 import tasks.TaskStatus;
 
 import javax.swing.plaf.PanelUI;
+import java.util.ArrayList;
 
 class InMemoryTaskManagerTest {
 
@@ -127,5 +128,11 @@ class InMemoryTaskManagerTest {
         assertEquals(task, taskAfterAdding);
         assertTrue(taskManager.getAllTasks().contains(task));
         assertTrue(taskManager.getHistory().contains(task));
+    }
+
+    @Test
+    public void canGetSubtasksForEpicId() {
+        Subtask subtaskByEpicId = taskManager.getSubtasksForEpicId(epic.getId()).get(0);
+        assertEquals(subtask, subtaskByEpicId);
     }
 }
