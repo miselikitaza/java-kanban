@@ -9,9 +9,6 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
-import javax.swing.plaf.PanelUI;
-import java.util.ArrayList;
-
 class InMemoryTaskManagerTest {
 
      InMemoryTaskManager taskManager;
