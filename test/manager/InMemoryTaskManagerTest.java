@@ -73,4 +73,12 @@ class InMemoryTaskManagerTest {
         assertNotEquals(task, predefinedTask);
     }
 
+    @Test
+    public void taskShouldRemainTheSame() {
+        Task taskAfterAdding = taskManager.getTaskById(task.getId());
+        assertEquals(task.getId(), taskAfterAdding.getId());
+        assertEquals(task.getName(), taskAfterAdding.getName());
+        assertEquals(task.getDescription(), taskAfterAdding.getDescription());
+        assertEquals(task.getStatus(),taskAfterAdding.getStatus());
+    }
 }
