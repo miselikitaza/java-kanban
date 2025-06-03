@@ -1,6 +1,7 @@
 package main;
 
 import manager.TaskManager;
+import manager.Managers;
 import tasks.Task;
 import tasks.Epic;
 import tasks.Subtask;
@@ -10,7 +11,7 @@ import tasks.TaskStatus;
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         //Создаем первую задачу:
         Task washingMachine = new Task("Стиральная машина", "подключить стиральную машину",
