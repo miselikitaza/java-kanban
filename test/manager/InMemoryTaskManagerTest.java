@@ -120,7 +120,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void taskShouldRetainThePreviousVersion() {
-        taskManager.addTaskToHistory(task);
+        taskManager.getTaskById(task.getId());
         Task taskAfterAdding = taskManager.getHistory().getFirst();
         assertEquals(task, taskAfterAdding);
         assertTrue(taskManager.getAllTasks().contains(task));
