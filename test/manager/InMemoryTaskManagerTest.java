@@ -129,7 +129,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void canGetSubtasksForEpicId() {
-        Subtask subtaskByEpicId = taskManager.getSubtasksForEpicId(epic.getId()).get(0);
+        Subtask subtaskByEpicId = taskManager.getSubtasksForEpicId(epic.getId()).getFirst();
         assertEquals(subtask, subtaskByEpicId);
     }
 }
