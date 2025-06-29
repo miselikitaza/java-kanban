@@ -132,4 +132,18 @@ class InMemoryTaskManagerTest {
         Subtask subtaskByEpicId = taskManager.getSubtasksForEpicId(epic.getId()).getFirst();
         assertEquals(subtask, subtaskByEpicId);
     }
+
+    @Test
+    public void epicShouldNotKeepARemoteSubtask() {
+        Subtask subtaskForDelete = new Subtask("Задача для удаления", "описание",
+                TaskStatus.NEW, epic.getId());
+        taskManager.createSubtask(subtaskForDelete);
+
+        assertTrue(epic.getSubtasks().contains(subtask.getId()));
+        assertTrue(epic.getSubtasks().contains(subtaskForDelete.getId()));
+
+        taskManager.deleteSubtaskById(subtaskForDelete.getId());
+        assertFalse(epic.getSubtasks().contains(subtaskForDelete.getId()));
+        assertTrue(epic.getSubtasks().contains(subtask.getId()));
+    }
 }
