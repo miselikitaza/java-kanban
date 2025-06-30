@@ -6,14 +6,16 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    Map<Integer, Node> nodes = new HashMap<>();
-    private Node head;
-    private Node tail;
+    private final Map<Integer, Node<Task>> nodes = new HashMap<>();
+    private Node<Task> head;
+    private Node<Task> tail;
 
     @Override
     public void add(Task task) {
+        Objects.requireNonNull(task);
+
         if (nodes.containsKey(task.getId())) {
-            Node node = nodes.get(task.getId());
+            Node<Task> node = nodes.get(task.getId());
             removeNode(node);
         }
         linkLast(task);
@@ -27,7 +29,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        Node node = nodes.get(id);
+        Node<Task> node = nodes.get(id);
         if (node == null) {
             return;
         }
@@ -35,7 +37,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         nodes.remove(id, node);
     }
 
-    private void removeNode(Node node) {
+    private void removeNode(Node<Task> node) {
         if (node == null) {
             return;
         }
@@ -57,7 +59,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void linkLast(Task task) {
-        Node node = new Node(task);
+        Node<Task> node = new Node<>(task);
         if (head == null) {
             head = tail = node;
         } else {
@@ -69,7 +71,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private List<Task> getTasks() {
         List<Task> tasks = new ArrayList<>();
-        Node currentNode = head;
+        Node<Task> currentNode = head;
         while (currentNode != null) {
             tasks.add(currentNode.value);
             currentNode = currentNode.next;
@@ -77,12 +79,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         return tasks;
     }
 
-    public static class Node {
-        private Task value;
-        private Node prev;
-        private Node next;
+    public static class Node<T> {
+        private final T value;
+        private Node<T> prev;
+        private Node<T> next;
 
-        public Node(Task value) {
+        public Node(T value) {
             this.value = value;
         }
     }
