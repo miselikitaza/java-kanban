@@ -46,6 +46,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public ArrayList<Task> getAllTasks() {
+        for (Task task : tasks.values()) {
+            historyManager.add(task);
+        }
         return new ArrayList<>(tasks.values());
     }
 
@@ -96,6 +99,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public ArrayList<Epic> getAllEpics() {
+        for (Epic epic : epics.values()) {
+            historyManager.add(epic);
+        }
         return new ArrayList<>(epics.values());
     }
 
@@ -162,6 +168,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public ArrayList<Subtask> getAllSubtask() {
+        for (Subtask subtask : subtasks.values()) {
+            historyManager.add(subtask);
+        }
         return new ArrayList<>(subtasks.values());
     }
 
