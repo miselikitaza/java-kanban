@@ -7,7 +7,7 @@ import tasks.TaskStatus;
 
 public class CSVFormatter {
 
-    public static String getHeader(){
+    public static String getHeader() {
         return "id,type,name,status,description,epic";
     }
 
