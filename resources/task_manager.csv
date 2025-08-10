@@ -1,0 +1,9 @@
+id,type,name,status,description,epic
+2,TASK,Рабочий стол,IN_PROGRESS,Собрать новый стол в кабинет,
+8,TASK,1,NEW,1,
+9,TASK,2,NEW,2,
+10,TASK,3,NEW,3,
+3,EPIC,День рождения мамы,DONE,Организовать праздник,
+4,SUBTASK,Украшения,DONE,Украсить комнату,3
+
+2,4,9,10,8,3
