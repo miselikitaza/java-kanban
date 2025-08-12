@@ -2,14 +2,12 @@ package manager;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.List;
 
 import tasks.Task;
 import tasks.Epic;
 import tasks.Subtask;
-import tasks.TaskStatus;
 
-public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private final File file;
 
@@ -56,32 +54,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             }
 
             for (Epic epic : manager.epics.values()) {
-                List<Integer> subtasksIds = epic.getSubtasks();
-                if (subtasksIds.isEmpty()) {
-                    epic.setStatus(TaskStatus.NEW);
-                    continue;
-                }
-                boolean isAllDone = true;
-                boolean isAllNew = true;
-                for (Integer subId : subtasksIds) {
-                    Subtask subtask = manager.subtasks.get(subId);
-                    if (subtask == null) {
-                        continue;
-                    }
-                    if (subtask.getStatus() != TaskStatus.DONE) {
-                        isAllDone = false;
-                    }
-                    if (subtask.getStatus() != TaskStatus.NEW) {
-                        isAllNew = false;
-                    }
-                }
-                if (isAllDone) {
-                    epic.setStatus(TaskStatus.DONE);
-                } else if (isAllNew) {
-                    epic.setStatus(TaskStatus.NEW);
-                } else {
-                    epic.setStatus(TaskStatus.IN_PROGRESS);
-                }
+                manager.updateEpic(epic);
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Произошла ошибка при сохранении данных в файл: " + e.getMessage());
@@ -89,7 +62,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         return manager;
     }
 
-    public void save() {
+   private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(CSVFormatter.getHeader());
             writer.newLine();
