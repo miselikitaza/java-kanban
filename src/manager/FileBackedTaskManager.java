@@ -55,6 +55,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
             for (Epic epic : manager.epics.values()) {
                 manager.updateEpic(epic);
+                epic.updateTime(manager.subtasks);
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Произошла ошибка при сохранении данных в файл: " + e.getMessage());
