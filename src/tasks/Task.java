@@ -1,25 +1,34 @@
 package tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
 
     private int id;
-    private String name;
-    private String description;
+    private final String name;
+    private final String description;
     private TaskStatus taskStatus;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
-    public Task(String name, String description, TaskStatus taskStatus) {
+    public Task(String name, String description, TaskStatus taskStatus, LocalDateTime startTime, Duration duration) {
         this.name = name;
         this.description = description;
         this.taskStatus = taskStatus;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
-    public Task(int id,String name, String description, TaskStatus taskStatus) {
+    public Task(int id,String name, String description, TaskStatus taskStatus, LocalDateTime startTime,
+                Duration duration) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.taskStatus = taskStatus;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public int getId() {
@@ -47,6 +56,18 @@ public class Task {
         this.taskStatus = taskStatus;
     }
 
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,7 +89,10 @@ public class Task {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", taskStatus=" + taskStatus +
+                ", taskStatus=" + taskStatus + '\'' +
+                ", startTime=" + startTime.format(DataTimeFormatter.formatter) + '\'' +
+                ", duration=" + DataTimeFormatter.formatDuration(duration) + '\'' +
+                ", endTime=" + getEndTime().format(DataTimeFormatter.formatter) +
                 '}';
 
     }
