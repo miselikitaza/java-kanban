@@ -6,6 +6,10 @@ import manager.InMemoryTaskManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+
 class SubtaskTest {
 
     static InMemoryTaskManager taskManager;
@@ -18,14 +22,16 @@ class SubtaskTest {
         epic = new Epic("Музыкальная школа", "Подготовиться к новому учебному году");
         taskManager.createEpic(epic);
         subtask = new Subtask("Одежда для танцев", "купить спортивный купальник",
-                TaskStatus.IN_PROGRESS, epic.getId());
+                TaskStatus.IN_PROGRESS, LocalDateTime.of(2025, Month.AUGUST, 25, 16, 40),
+                Duration.ofMinutes(15), epic.getId());
         taskManager.createSubtask(subtask);
     }
 
     @Test
     public void shouldBeOneSubtaskWhenIdsAreEqual() {
         Subtask subtaskTwo = new Subtask(subtask.getId(), "Торт", "испечь коржи",
-                TaskStatus.IN_PROGRESS, epic.getId());
+                TaskStatus.IN_PROGRESS, LocalDateTime.of(2025, Month.AUGUST, 26, 11, 0),
+                Duration.ofMinutes(3),  epic.getId());
         taskManager.createSubtask(subtaskTwo);
         assertEquals(subtask, subtaskTwo);
     }
@@ -33,7 +39,7 @@ class SubtaskTest {
     @Test
     public void subtaskCannotReferenceItselfAsEpic() {
         Subtask uncorrectSubtask = new Subtask(subtask.getId(), subtask.getName(), subtask.getDescription(),
-                subtask.getStatus(), subtask.getId());
+                subtask.getStatus(), subtask.getStartTime(), subtask.getDuration(), subtask.getId());
         taskManager.createSubtask(uncorrectSubtask);
         assertNotEquals(subtask.getEpicId(), uncorrectSubtask.getId());
         assertEquals(1, taskManager.getAllSubtask().size());
