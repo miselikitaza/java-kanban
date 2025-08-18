@@ -10,6 +10,10 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+
 class InMemoryHistoryManagerTest {
 
     InMemoryTaskManager historyManager;
@@ -23,11 +27,15 @@ class InMemoryHistoryManagerTest {
         historyManager = new InMemoryTaskManager();
         epic = new Epic("Эпик", "эпик");
         historyManager.createEpic(epic);
-        subtask = new Subtask("Подзадача", "подзадача", TaskStatus.NEW, epic.getId());
+        subtask = new Subtask("Подзадача", "подзадача", TaskStatus.NEW,
+                LocalDateTime.of(2025, Month.AUGUST, 21, 15, 0), Duration.ofHours(24),
+                epic.getId());
         historyManager.createSubtask(subtask);
-        task1 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
+        task1 = new Task("Задача 1", "Описание 1", TaskStatus.NEW,
+                LocalDateTime.of(2026, Month.JANUARY, 1, 0, 0), Duration.ofMinutes(45));
         historyManager.createTask(task1);
-        task2 = new Task("Задача 2", "Описание 2", TaskStatus.NEW);
+        task2 = new Task("Задача 2", "Описание 2", TaskStatus.NEW,
+                LocalDateTime.of(2025, Month.DECEMBER, 31, 10, 10), Duration.ofMinutes(50));
         historyManager.createTask(task2);
 
         historyManager.getTaskById(task1.getId());

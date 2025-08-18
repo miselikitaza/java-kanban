@@ -8,6 +8,9 @@ import tasks.Task;
 import tasks.TaskStatus;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -22,11 +25,14 @@ public abstract class TaskManagerTest <T extends TaskManager> {
     @BeforeEach
     void create() throws IOException {
         manager = createManager();
-        task = new Task("Задача", "Описание", TaskStatus.NEW);
+        task = new Task("Задача", "Описание", TaskStatus.NEW,
+                LocalDateTime.of(2025, Month.AUGUST, 20, 10, 30), Duration.ofSeconds(200));
         manager.createTask(task);
         epic = new Epic("Эпик", "Описание");
         manager.createEpic(epic);
-        subtask = new Subtask("Подзадача", "Описание", TaskStatus.NEW, epic.getId());
+        subtask = new Subtask("Подзадача", "Описание", TaskStatus.NEW,
+                LocalDateTime.of(2025, Month.AUGUST, 21, 20, 30),
+                Duration.ofSeconds(2000), epic.getId());
         manager.createSubtask(subtask);
     }
 

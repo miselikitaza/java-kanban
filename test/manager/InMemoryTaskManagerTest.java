@@ -6,6 +6,10 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+
 public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     @Override
@@ -16,7 +20,8 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @Test
     public void tasksWithDifferentTypesOfIdsDoNotConflict() {
         Task predefinedTask = new Task(8, "Задача с предопределенным id", "Описание",
-                TaskStatus.IN_PROGRESS);
+                TaskStatus.IN_PROGRESS, LocalDateTime.of(2025, Month.SEPTEMBER, 12, 13, 45),
+                Duration.ofMinutes(12));
         manager.createTask(predefinedTask);
         assertTrue(manager.getAllTasks().contains(task));
         assertTrue(manager.getAllTasks().contains(predefinedTask));
@@ -50,7 +55,8 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @Test
     public void epicShouldNotKeepARemoteSubtask() {
         Subtask subtaskForDelete = new Subtask("Задача для удаления", "описание",
-                TaskStatus.NEW, epic.getId());
+                TaskStatus.NEW, LocalDateTime.of(2025, Month.SEPTEMBER, 24, 23, 15),
+                Duration.ofMinutes(10), epic.getId());
         manager.createSubtask(subtaskForDelete);
 
         assertTrue(epic.getSubtasks().contains(subtask.getId()));
