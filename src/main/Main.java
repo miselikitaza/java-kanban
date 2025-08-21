@@ -7,19 +7,22 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 
 public class Main {
 
     public static void main(String[] args) {
         TaskManager taskManager = Managers.getDefault();
-
         //Создаем первую задачу:
         Task washingMachine = new Task("Стиральная машина", "подключить стиральную машину",
-                TaskStatus.NEW);
+                TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(2));
         taskManager.createTask(washingMachine);
 
         //Создаем вторую задачу:
-        Task table = new Task("Рабочий стол", "Собрать новый стол в кабинет", TaskStatus.NEW);
+        Task table = new Task("Рабочий стол", "Собрать новый стол в кабинет", TaskStatus.NEW,
+                LocalDateTime.now(), Duration.ofMinutes(1));
         taskManager.createTask(table);
 
         //Создаем эпик с двумя подзадачами:
@@ -28,12 +31,12 @@ public class Main {
 
         //Первая подзадача:
         Subtask decoration = new Subtask("Украшения", "Украсить комнату",
-                TaskStatus.IN_PROGRESS, birthday.getId());
+                TaskStatus.IN_PROGRESS, LocalDateTime.now(), Duration.ofMinutes(2), birthday.getId());
         taskManager.createSubtask(decoration);
 
         //Вторая подзадача:
         Subtask cake = new Subtask("Торт", "Заказать праздничный торт",
-                TaskStatus.NEW, birthday.getId());
+                TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(4), birthday.getId());
         taskManager.createSubtask(cake);
 
         //Создаем эпик с одной подзадачей:
@@ -42,7 +45,7 @@ public class Main {
 
         //Создаем подзадачу:
         Subtask ticket = new Subtask("Билеты", "Купить билеты на самолет",
-                TaskStatus.NEW, journey.getId());
+                TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(3), journey.getId());
         taskManager.createSubtask(ticket);
 
         //Печатаем списки всех задач, эпиков и подзадач:
@@ -58,22 +61,23 @@ public class Main {
 
         //Меняем статусы созданных объектов
         Task newWashingMachine = new Task(washingMachine.getId(), washingMachine.getName(),
-                washingMachine.getDescription(), TaskStatus.DONE);
+                washingMachine.getDescription(), TaskStatus.DONE, LocalDateTime.now(), Duration.ofMinutes(8));
         taskManager.updateTask(newWashingMachine);
 
-        Task newTable = new Task(table.getId(), table.getName(), table.getDescription(), TaskStatus.IN_PROGRESS);
+        Task newTable = new Task(table.getId(), table.getName(), table.getDescription(), TaskStatus.IN_PROGRESS,
+                LocalDateTime.now(), Duration.ofMinutes(10));
         taskManager.updateTask(newTable);
 
         Subtask newDecoration = new Subtask(decoration.getId(), decoration.getName(), decoration.getDescription(),
-                TaskStatus.DONE, birthday.getId());
+                TaskStatus.DONE, LocalDateTime.now(), Duration.ofMinutes(5), birthday.getId());
         taskManager.updateSubtask(newDecoration);
 
         Subtask newCake = new Subtask(cake.getId(), cake.getName(), cake.getDescription(),
-                TaskStatus.DONE, birthday.getId());
+                TaskStatus.DONE, LocalDateTime.now(), Duration.ofMinutes(15), birthday.getId());
         taskManager.updateSubtask(newCake);
 
         Subtask newTicket = new Subtask(ticket.getId(), ticket.getName(), ticket.getDescription(),
-                TaskStatus.IN_PROGRESS, journey.getId());
+                TaskStatus.IN_PROGRESS, LocalDateTime.now(), Duration.ofMinutes(2), journey.getId());
         taskManager.updateSubtask(newTicket);
 
         System.out.println("Изменили статусы задач.");
@@ -104,18 +108,19 @@ public class Main {
 
         System.out.println("Добавляем задачи в историю.");
 
-        Task task1 = new Task("1", "1", TaskStatus.NEW);
+        Task task1 = new Task("1", "1", TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(20));
         taskManager.createTask(task1);
-        Task task2 = new Task("2", "2", TaskStatus.NEW);
+        Task task2 = new Task("2", "2", TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(13));
         taskManager.createTask(task2);
-        Task task3 = new Task("3", "3", TaskStatus.NEW);
+        Task task3 = new Task("3", "3", TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(8));
         taskManager.createTask(task3);
         Epic epic = new Epic("Эпик с 2-мя подзадачами", "описание");
         taskManager.createEpic(epic);
-        Subtask subtask1 = new Subtask("Первая подзадача", "описание", TaskStatus.NEW, epic.getId());
+        Subtask subtask1 = new Subtask("Первая подзадача", "описание", TaskStatus.NEW,
+                LocalDateTime.now(), Duration.ofMinutes(12), epic.getId());
         taskManager.createSubtask(subtask1);
         Subtask subtask2 = new Subtask("Вторая подзадача", "описание",
-                TaskStatus.IN_PROGRESS, epic.getId());
+                TaskStatus.IN_PROGRESS, LocalDateTime.now(), Duration.ofMinutes(4), epic.getId());
         taskManager.createSubtask(subtask2);
 
         System.out.println("Посмотрели три задачи:");
