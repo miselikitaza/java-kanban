@@ -2,6 +2,8 @@ package manager;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.Arrays;
+import java.util.Objects;
 
 import tasks.Task;
 import tasks.Epic;
@@ -19,20 +21,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
 
         try {
-            if (!file.exists() || file.length() == 0) {
+            if (!file.exists()) {
+                throw new ManagerSaveException("Файл не существует: " + file.getAbsolutePath());
+            }
+
+            if (file.length() == 0) {
                 return manager;
             }
 
             String content = Files.readString(file.toPath());
             String[] lines = content.split(System.lineSeparator());
-
-            for (int i = 1; i < lines.length; i++) {
-                String line = lines[i].trim();
-                if (line.isEmpty()) {
-                    continue;
-                }
-                    Task task = CSVFormatter.fromString(line);
-                    if (task != null) {
+            Arrays.stream(lines)
+                    .skip(1)
+                    .map(String::trim)
+                    .filter(line -> !line.isEmpty())
+                    .map(CSVFormatter::fromString)
+                    .filter(Objects::nonNull)
+                    .forEach(task -> {
                         if (task instanceof Epic) {
                             manager.epics.put(task.getId(), (Epic) task);
                         } else if (task instanceof Subtask) {
@@ -43,22 +48,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         if (task.getId() > manager.id) {
                             manager.id = task.getId();
                         }
-                    }
-            }
+                    });
 
-            for (Subtask subtask : manager.subtasks.values()) {
+            manager.subtasks.values().forEach(subtask -> {
                 Epic epic = manager.epics.get(subtask.getEpicId());
                 if (epic != null) {
                     epic.addSubtasks(subtask.getId());
+                    manager.updateEpic(epic);
                 }
-            }
+            });
 
-            for (Epic epic : manager.epics.values()) {
-                manager.updateEpic(epic);
+            manager.epics.values().forEach(epic -> {
                 epic.updateTime(manager.subtasks);
-            }
+            });
         } catch (IOException e) {
-            throw new ManagerSaveException("Произошла ошибка при сохранении данных в файл: " + e.getMessage());
+            throw new ManagerSaveException("Произошла ошибка при извлечении данных из файла: " + e.getMessage());
         }
         return manager;
     }
