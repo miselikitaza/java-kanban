@@ -110,4 +110,43 @@ public abstract class TaskManagerTest <T extends TaskManager> {
         assertFalse(manager.getAllSubtask().contains(subtask));
     }
 
+    @Test
+    public void epicShouldChangeStatusDependingOnTheSubtasks() {
+        manager.createSubtask(new Subtask("Имя", "Описание", TaskStatus.NEW,
+                LocalDateTime.of(2025, Month.SEPTEMBER, 12, 20, 10),
+                Duration.ofHours(8), epic.getId()));
+        assertEquals(TaskStatus.NEW, epic.getStatus());
+
+        manager.deleteAllSubtasks();
+        manager.createSubtask(new Subtask("Имя", "Описание", TaskStatus.DONE,
+                LocalDateTime.of(2025, Month.SEPTEMBER, 10, 13,40),
+                Duration.ofHours(4), epic.getId()));
+        manager.createSubtask(new Subtask("Имя", "Описание", TaskStatus.DONE,
+                LocalDateTime.of(2025, Month.SEPTEMBER, 12, 20, 34),
+                Duration.ofMinutes(12), epic.getId()));
+        assertEquals(TaskStatus.DONE, epic.getStatus());
+
+        manager.createSubtask(new Subtask("Имя", "Описание", TaskStatus.NEW, LocalDateTime.now(),
+                Duration.ofMinutes(8), epic.getId()));
+        assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
+
+        manager.createSubtask(new Subtask("Имя", "Описание", TaskStatus.IN_PROGRESS,
+                LocalDateTime.now(), Duration.ofMinutes(40), epic.getId()));
+        assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
+    }
+
+    @Test
+    public void tasksShouldNotOverlapOfExecutionTime() {
+        Task taskWithDifferentTime = new Task("Имя", "Описание", TaskStatus.IN_PROGRESS,
+                LocalDateTime.of(2025, Month.SEPTEMBER, 25, 12, 40), Duration.ofHours(12));
+        manager.createTask(taskWithDifferentTime);
+        assertEquals(2, manager.getAllTasks().size());
+        assertTrue(manager.getAllTasks().contains(taskWithDifferentTime));
+
+        Task taskWithSameTime = new Task("Имя", "Описание", TaskStatus.DONE,
+                task.getStartTime(), Duration.ofHours(4));
+        manager.createTask(taskWithSameTime);
+        assertEquals(2, manager.getAllTasks().size());
+        assertFalse(manager.getAllTasks().contains(taskWithSameTime));
+    }
 }
