@@ -6,19 +6,20 @@ import tasks.TaskStatus;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     File tempFile;
-    FileBackedTaskManager manager;
 
     @Override
     @BeforeEach
-    public void create() throws IOException{
-            tempFile = File.createTempFile("test_tasks", ".csv");
-            super.create();
+    public void create() throws IOException {
+        tempFile = File.createTempFile("test_tasks", ".csv");
+        super.create();
     }
 
     @Override
@@ -67,5 +68,24 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         assertEquals(1, loadedManager.getEpicById(epic.getId()).getSubtasks().size());
         assertTrue(loadedManager.getEpicById(epic.getId()).getSubtasks().contains(subtask.getId()));
         assertEquals(TaskStatus.NEW, loadedManager.getEpicById(epic.getId()).getStatus());
+    }
+
+    @Test
+    void saveCorruptedFileShouldThrowManagerSaveException() throws IOException {
+        File fileForException = new File("/file/path/that/does/not/exist/test.csv");
+        FileBackedTaskManager corruptedManager = new FileBackedTaskManager(fileForException);
+        assertThrows(ManagerSaveException.class, () -> {
+            corruptedManager.createTask(new tasks.Task("Имя", "Описание", TaskStatus.IN_PROGRESS,
+                    LocalDateTime.now(), Duration.ofHours(3)));
+        });
+        fileForException.delete();
+    }
+
+    @Test
+    void loadFromCorruptedFileShouldThrowManagerSaveException() throws IOException {
+        File fileForException = new File("/file/path/that/does/not/exist/test.csv");
+        assertThrows(ManagerSaveException.class, () -> {
+            FileBackedTaskManager.loadFromFile(fileForException);
+        });
     }
 }
