@@ -53,7 +53,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     }
 
     @Test
-    public void epicShouldNotKeepARemoteSubtask() {
+    public void epicShouldNotKeepADeletedSubtask() {
         Subtask subtaskForDelete = new Subtask("Задача для удаления", "описание",
                 TaskStatus.NEW, LocalDateTime.of(2025, Month.SEPTEMBER, 24, 23, 15),
                 Duration.ofMinutes(10), epic.getId());
