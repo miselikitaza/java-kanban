@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 
 public class CSVFormatter {
 
+    public static final String PRIORITY_HEADER = "#PRIORITY_TASKS";
+
     public static String getHeader() {
         return "id,type,name,status,description,startTime,duration,epic";
     }
@@ -46,10 +48,6 @@ public class CSVFormatter {
 
     public static Task fromString(String value) {
         String[] parts = value.split(",", -1);
-        if (parts.length < 8) {
-            throw new IllegalArgumentException("Некорректный формат строки задачи");
-        }
-
         int id = Integer.parseInt(parts[0].trim());
         TaskType type = TaskType.valueOf(parts[1].trim());
         String name = parts[2].trim();
