@@ -88,4 +88,14 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
             FileBackedTaskManager.loadFromFile(fileForException);
         });
     }
+
+    @Test
+    void shouldSaveAndUploadPrioritizedTasks() {
+        assertTrue(manager.getPrioritizedTasks().contains(task));
+        assertTrue(manager.getPrioritizedTasks().contains(subtask));
+
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
+        assertTrue(loadedManager.getPrioritizedTasks().contains(task));
+        assertTrue(loadedManager.getPrioritizedTasks().contains(subtask));
+    }
 }
