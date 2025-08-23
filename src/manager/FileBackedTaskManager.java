@@ -2,12 +2,17 @@ package manager;
 
 import java.io.*;
 import java.nio.file.*;
-import java.util.Arrays;
-import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import tasks.Task;
 import tasks.Epic;
 import tasks.Subtask;
+import tasks.TaskStatus;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -19,7 +24,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
-
         try {
             if (!file.exists()) {
                 throw new ManagerSaveException("Файл не существует: " + file.getAbsolutePath());
@@ -31,37 +35,66 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
             String content = Files.readString(file.toPath());
             String[] lines = content.split(System.lineSeparator());
-            Arrays.stream(lines)
-                    .skip(1)
-                    .map(String::trim)
-                    .filter(line -> !line.isEmpty())
-                    .map(CSVFormatter::fromString)
-                    .filter(Objects::nonNull)
-                    .forEach(task -> {
-                        if (task instanceof Epic) {
-                            manager.epics.put(task.getId(), (Epic) task);
-                        } else if (task instanceof Subtask) {
-                            manager.subtasks.put(task.getId(), (Subtask) task);
-                        } else {
-                            manager.tasks.put(task.getId(), task);
-                        }
-                        if (task.getId() > manager.id) {
-                            manager.id = task.getId();
-                        }
-                    });
+            boolean inPrioritySection = false;
+            String priorityLine = null;
 
-            manager.subtasks.values().forEach(subtask -> {
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i].trim();
+                if (line.isEmpty()) continue;
+
+                if (line.equals(CSVFormatter.PRIORITY_HEADER)) {
+                    inPrioritySection = true;
+                    continue;
+                }
+
+                if (inPrioritySection) {
+                    priorityLine = line;
+                    break;
+                } else if (i > 0) {
+                    Task task = CSVFormatter.fromString(line);
+                    if (task == null) continue;
+
+                    if (task instanceof Epic) {
+                        manager.epics.put(task.getId(), (Epic) task);
+                    } else if (task instanceof Subtask) {
+                        manager.subtasks.put(task.getId(), (Subtask) task);
+                    } else {
+                        manager.tasks.put(task.getId(), task);
+                    }
+
+                    if (task.getId() > manager.id) {
+                        manager.id = task.getId();
+                    }
+                }
+            }
+
+            for (Subtask subtask : manager.subtasks.values()) {
                 Epic epic = manager.epics.get(subtask.getEpicId());
                 if (epic != null) {
                     epic.addSubtasks(subtask.getId());
-                    manager.updateEpic(epic);
                 }
-            });
+            }
 
-            manager.epics.values().forEach(epic -> {
-                epic.updateTime(manager.subtasks);
-            });
-        } catch (IOException e) {
+            manager.epics.values().forEach(epic -> epic.updateTime(manager.subtasks));
+
+            if (priorityLine != null && !priorityLine.trim().isEmpty()) {
+                String[] priorityIds = priorityLine.split(",");
+                for (String id : priorityIds) {
+                    try {
+                        int taskId = Integer.parseInt(id.trim());
+                        Task task = manager.tasks.get(taskId);
+                        if (task == null) {
+                            task = manager.subtasks.get(taskId);
+                        }
+                        if (task != null && task.getStartTime() != null) {
+                            manager.prioritizedTasks.add(task);
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Некорректный ID приоритетной задачи: " + id);
+                    }
+                }
+            }
+} catch (IOException e) {
             throw new ManagerSaveException("Произошла ошибка при извлечении данных из файла: " + e.getMessage());
         }
         return manager;
@@ -72,21 +105,30 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             writer.write(CSVFormatter.getHeader());
             writer.newLine();
 
-            for (Task task : getAllTasks()) {
-                writer.write(CSVFormatter.toString(task));
+            Stream.concat(Stream.concat(getAllTasks().stream(), getAllEpics().stream()),
+                            getAllSubtask().stream())
+                    .map(CSVFormatter::toString)
+                    .forEach(line -> {
+                        try {
+                            writer.write(line);
+                            writer.newLine();
+                        } catch (IOException e) {
+                            throw new ManagerSaveException("Ошибка при записи задачи");
+                        }
+                    });
+
+            List<Task> prioritized = getPrioritizedTasks();
+            if (!prioritized.isEmpty()) {
+                writer.write(CSVFormatter.PRIORITY_HEADER);
+                writer.newLine();
+
+                String priorityIds = prioritized.stream()
+                        .map(task -> String.valueOf(task.getId()))
+                        .collect(Collectors.joining(","));
+
+                writer.write(priorityIds);
                 writer.newLine();
             }
-
-            for (Epic epic : getAllEpics()) {
-                writer.write(CSVFormatter.toString(epic));
-                writer.newLine();
-            }
-
-            for (Subtask subtask : getAllSubtask()) {
-                writer.write(CSVFormatter.toString(subtask));
-                writer.newLine();
-            }
-
         } catch (IOException exception) {
             throw new ManagerSaveException("Произошла ошибка при сохранении данных в файл.");
         }
