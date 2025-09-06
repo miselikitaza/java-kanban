@@ -27,7 +27,7 @@ class EpicTest {
 
     @Test
     public void ShouldReturnFalseWhenAddEpicToItself() {
-        epic.addSubtasks(epic.getId());
+        epic.addSubtask(epic.getId());
         assertFalse(epic.getSubtasks().contains(epic.getId()));
     }
 }
