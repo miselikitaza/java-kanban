@@ -55,7 +55,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getTaskById(int id) throws NotFoundException{
+    public Task getTaskById(int id) throws NotFoundException {
         Task task = tasks.get(id);
         if (task == null) {
             throw new NotFoundException("Задача с таким id не найдена");
@@ -132,7 +132,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic updateEpic(Epic epic) throws NotFoundException{
+    public Epic updateEpic(Epic epic) throws NotFoundException {
         if (!epics.containsKey(epic.getId())) {
             throw new NotFoundException("Эпик с таким id не найден");
         }
