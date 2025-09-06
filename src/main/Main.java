@@ -69,7 +69,7 @@ public class Main {
         //Меняем статусы созданных объектов
         Task newWashingMachine = new Task(washingMachine.getId(), washingMachine.getName(),
                 washingMachine.getDescription(), TaskStatus.DONE, LocalDateTime.of(2025, Month.NOVEMBER,
-                10 ,10 ,0), Duration.ofMinutes(8));
+                10, 10, 0), Duration.ofMinutes(8));
         taskManager.updateTask(newWashingMachine);
 
         Task newTable = new Task(table.getId(), table.getName(), table.getDescription(), TaskStatus.IN_PROGRESS,
