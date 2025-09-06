@@ -22,6 +22,5 @@ public class HttpHistoryTest extends HttpTaskServerTest {
         assertEquals(200, response.statusCode());
         assertTrue(response.body().contains("Задача 1"));
         assertTrue(response.body().contains("Подзадача 1"));
-        System.out.println(response.body());
     }
 }
