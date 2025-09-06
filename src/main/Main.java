@@ -1,5 +1,7 @@
 package main;
 
+import exceptions.NotFoundException;
+import exceptions.TimeConflictException;
 import manager.TaskManager;
 import manager.Managers;
 import tasks.Task;
@@ -9,20 +11,22 @@ import tasks.TaskStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Month;
 
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NotFoundException, TimeConflictException {
         TaskManager taskManager = Managers.getDefault();
         //Создаем первую задачу:
         Task washingMachine = new Task("Стиральная машина", "подключить стиральную машину",
-                TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(2));
+                TaskStatus.NEW, LocalDateTime.of(2025, Month.OCTOBER, 1, 11, 0),
+                Duration.ofMinutes(2));
         taskManager.createTask(washingMachine);
 
         //Создаем вторую задачу:
         Task table = new Task("Рабочий стол", "Собрать новый стол в кабинет", TaskStatus.NEW,
-                LocalDateTime.now(), Duration.ofMinutes(1));
+                LocalDateTime.of(2025, Month.OCTOBER, 5, 17, 0), Duration.ofMinutes(1));
         taskManager.createTask(table);
 
         //Создаем эпик с двумя подзадачами:
@@ -31,12 +35,14 @@ public class Main {
 
         //Первая подзадача:
         Subtask decoration = new Subtask("Украшения", "Украсить комнату",
-                TaskStatus.IN_PROGRESS, LocalDateTime.now(), Duration.ofMinutes(2), birthday.getId());
+                TaskStatus.IN_PROGRESS, LocalDateTime.of(2025, Month.OCTOBER, 10, 14, 5),
+                Duration.ofMinutes(2), birthday.getId());
         taskManager.createSubtask(decoration);
 
         //Вторая подзадача:
         Subtask cake = new Subtask("Торт", "Заказать праздничный торт",
-                TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(4), birthday.getId());
+                TaskStatus.NEW, LocalDateTime.of(2025, Month.DECEMBER, 10, 10, 0),
+                Duration.ofMinutes(4), birthday.getId());
         taskManager.createSubtask(cake);
 
         //Создаем эпик с одной подзадачей:
@@ -45,7 +51,8 @@ public class Main {
 
         //Создаем подзадачу:
         Subtask ticket = new Subtask("Билеты", "Купить билеты на самолет",
-                TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(3), journey.getId());
+                TaskStatus.NEW, LocalDateTime.of(2025, Month.DECEMBER, 1, 12, 0),
+                Duration.ofMinutes(3), journey.getId());
         taskManager.createSubtask(ticket);
 
         //Печатаем списки всех задач, эпиков и подзадач:
@@ -61,23 +68,27 @@ public class Main {
 
         //Меняем статусы созданных объектов
         Task newWashingMachine = new Task(washingMachine.getId(), washingMachine.getName(),
-                washingMachine.getDescription(), TaskStatus.DONE, LocalDateTime.now(), Duration.ofMinutes(8));
+                washingMachine.getDescription(), TaskStatus.DONE, LocalDateTime.of(2025, Month.NOVEMBER,
+                10 ,10 ,0), Duration.ofMinutes(8));
         taskManager.updateTask(newWashingMachine);
 
         Task newTable = new Task(table.getId(), table.getName(), table.getDescription(), TaskStatus.IN_PROGRESS,
-                LocalDateTime.now(), Duration.ofMinutes(10));
+                LocalDateTime.of(2025, Month.DECEMBER, 31, 20, 0), Duration.ofMinutes(10));
         taskManager.updateTask(newTable);
 
         Subtask newDecoration = new Subtask(decoration.getId(), decoration.getName(), decoration.getDescription(),
-                TaskStatus.DONE, LocalDateTime.now(), Duration.ofMinutes(5), birthday.getId());
+                TaskStatus.DONE, LocalDateTime.of(2025, Month.NOVEMBER, 12, 12, 30),
+                Duration.ofMinutes(5), birthday.getId());
         taskManager.updateSubtask(newDecoration);
 
         Subtask newCake = new Subtask(cake.getId(), cake.getName(), cake.getDescription(),
-                TaskStatus.DONE, LocalDateTime.now(), Duration.ofMinutes(15), birthday.getId());
+                TaskStatus.DONE, LocalDateTime.of(2025, Month.NOVEMBER, 30, 14, 0),
+                Duration.ofMinutes(15), birthday.getId());
         taskManager.updateSubtask(newCake);
 
         Subtask newTicket = new Subtask(ticket.getId(), ticket.getName(), ticket.getDescription(),
-                TaskStatus.IN_PROGRESS, LocalDateTime.now(), Duration.ofMinutes(2), journey.getId());
+                TaskStatus.IN_PROGRESS, LocalDateTime.of(2025, Month.NOVEMBER, 5, 12, 15),
+                Duration.ofMinutes(2), journey.getId());
         taskManager.updateSubtask(newTicket);
 
         System.out.println("Изменили статусы задач.");
@@ -108,19 +119,24 @@ public class Main {
 
         System.out.println("Добавляем задачи в историю.");
 
-        Task task1 = new Task("1", "1", TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(20));
+        Task task1 = new Task("1", "1", TaskStatus.NEW, LocalDateTime.of(2025, Month.SEPTEMBER,
+                12, 20, 14), Duration.ofMinutes(20));
         taskManager.createTask(task1);
-        Task task2 = new Task("2", "2", TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(13));
+        Task task2 = new Task("2", "2", TaskStatus.NEW, LocalDateTime.of(2025, Month.SEPTEMBER,
+                20, 14, 5), Duration.ofMinutes(13));
         taskManager.createTask(task2);
-        Task task3 = new Task("3", "3", TaskStatus.NEW, LocalDateTime.now(), Duration.ofMinutes(8));
+        Task task3 = new Task("3", "3", TaskStatus.NEW, LocalDateTime.of(2025, Month.SEPTEMBER,
+                8, 12, 30), Duration.ofMinutes(8));
         taskManager.createTask(task3);
         Epic epic = new Epic("Эпик с 2-мя подзадачами", "описание");
         taskManager.createEpic(epic);
         Subtask subtask1 = new Subtask("Первая подзадача", "описание", TaskStatus.NEW,
-                LocalDateTime.now(), Duration.ofMinutes(12), epic.getId());
+                LocalDateTime.of(2025, Month.OCTOBER, 10, 14, 0),
+                Duration.ofMinutes(12), epic.getId());
         taskManager.createSubtask(subtask1);
         Subtask subtask2 = new Subtask("Вторая подзадача", "описание",
-                TaskStatus.IN_PROGRESS, LocalDateTime.now(), Duration.ofMinutes(4), epic.getId());
+                TaskStatus.IN_PROGRESS, LocalDateTime.of(2025, Month.OCTOBER, 13, 13, 30),
+                Duration.ofMinutes(4), epic.getId());
         taskManager.createSubtask(subtask2);
 
         System.out.println("Посмотрели три задачи:");

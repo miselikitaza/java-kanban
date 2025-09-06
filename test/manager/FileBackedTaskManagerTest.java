@@ -1,5 +1,8 @@
 package manager;
 
+import exceptions.ManagerSaveException;
+import exceptions.NotFoundException;
+import exceptions.TimeConflictException;
 import org.junit.jupiter.api.*;
 import tasks.TaskStatus;
 
@@ -17,7 +20,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @Override
     @BeforeEach
-    public void create() throws IOException {
+    public void create() throws IOException, TimeConflictException, NotFoundException {
         tempFile = File.createTempFile("test_tasks", ".csv");
         super.create();
     }
@@ -62,7 +65,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void loadFromFileShouldRestoreEpicSubtasksRelationship() {
+    void loadFromFileShouldRestoreEpicSubtasksRelationship() throws NotFoundException {
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
 
         assertEquals(1, loadedManager.getEpicById(epic.getId()).getSubtasks().size());
@@ -71,7 +74,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void saveCorruptedFileShouldThrowManagerSaveException() throws IOException {
+    void saveCorruptedFileShouldThrowManagerSaveException() {
         File fileForException = new File("/file/path/that/does/not/exist/test.csv");
         FileBackedTaskManager corruptedManager = new FileBackedTaskManager(fileForException);
         assertThrows(ManagerSaveException.class, () -> {
@@ -82,7 +85,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void loadFromCorruptedFileShouldThrowManagerSaveException() throws IOException {
+    void loadFromCorruptedFileShouldThrowManagerSaveException() {
         File fileForException = new File("/file/path/that/does/not/exist/test.csv");
         assertThrows(ManagerSaveException.class, () -> {
             FileBackedTaskManager.loadFromFile(fileForException);
