@@ -1,7 +1,6 @@
 package http;
 
 import com.sun.net.httpserver.HttpExchange;
-import exceptions.NotFoundException;
 import manager.TaskManager;
 import tasks.Task;
 import java.io.IOException;
