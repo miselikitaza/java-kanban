@@ -8,10 +8,10 @@ import java.util.List;
 
 public class UserHandler extends BaseHttpHandler {
 
-    private static TaskManager manager;
+    private final TaskManager manager;
 
     public UserHandler(TaskManager manager) {
-        UserHandler.manager = manager;
+        this.manager = manager;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class UserHandler extends BaseHttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        if (!method.equals("GET")) {
+        if (!method.equals(GET)) {
             throw new IOException("Неверный метод");
         }
 
