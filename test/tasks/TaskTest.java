@@ -1,5 +1,6 @@
 package tasks;
 
+import exceptions.TimeConflictException;
 import manager.InMemoryTaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ class TaskTest {
     InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
     @Test
-    public void shouldBeOneTaskWhenIdsAreEqual() {
+    public void shouldBeOneTaskWhenIdsAreEqual() throws TimeConflictException {
         Task taskOne = new Task("Спорт", "сделать пробежку", TaskStatus.IN_PROGRESS,
                 LocalDateTime.of(2025, Month.AUGUST, 18, 20, 30), Duration.ofMinutes(12));
         taskManager.createTask(taskOne);
@@ -21,5 +22,6 @@ class TaskTest {
                 LocalDateTime.of(2025, Month.AUGUST, 21, 13, 20), Duration.ofMinutes(8));
         taskManager.createTask(taskTwo);
         Assertions.assertEquals(taskOne, taskTwo);
+        Assertions.assertEquals(1, taskManager.getAllTasks().size());
     }
 }

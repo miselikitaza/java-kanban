@@ -1,5 +1,7 @@
 package manager;
 
+import exceptions.NotFoundException;
+import exceptions.TimeConflictException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
@@ -23,7 +25,7 @@ public abstract class TaskManagerTest <T extends TaskManager> {
     Subtask subtask;
 
     @BeforeEach
-    void create() throws IOException {
+    void create() throws IOException, TimeConflictException, NotFoundException {
         manager = createManager();
         task = new Task("Задача", "Описание", TaskStatus.NEW,
                 LocalDateTime.of(2025, Month.AUGUST, 20, 10, 30), Duration.ofSeconds(200));
@@ -57,19 +59,19 @@ public abstract class TaskManagerTest <T extends TaskManager> {
     }
 
     @Test
-    public void canSearchTaskById() {
+    public void canSearchTaskById() throws NotFoundException {
         assertNotNull(manager.getTaskById(task.getId()));
         assertEquals(task, manager.getTaskById(task.getId()));
     }
 
     @Test
-    public void canSearchEpicById() {
+    public void canSearchEpicById() throws NotFoundException {
         assertNotNull(manager.getEpicById(epic.getId()));
         assertEquals(epic, manager.getEpicById(epic.getId()));
     }
 
     @Test
-    public void canSearchSubtaskById() {
+    public void canSearchSubtaskById() throws NotFoundException {
         assertNotNull(manager.getSubtaskById(subtask.getId()));
         assertEquals(subtask, manager.getSubtaskById(subtask.getId()));
     }
@@ -93,25 +95,25 @@ public abstract class TaskManagerTest <T extends TaskManager> {
     }
 
     @Test
-    public void canDeleteTaskById() {
+    public void canDeleteTaskById() throws NotFoundException {
         manager.deleteTaskById(task.getId());
         assertFalse(manager.getAllTasks().contains(task));
     }
 
     @Test
-    public void canDeleteEpicById() {
+    public void canDeleteEpicById() throws NotFoundException {
         manager.deleteEpicById(epic.getId());
         assertFalse(manager.getAllEpics().contains(epic));
     }
 
     @Test
-    public void canDeleteSubtaskById() {
+    public void canDeleteSubtaskById() throws NotFoundException {
         manager.deleteSubtaskById(subtask.getId());
         assertFalse(manager.getAllSubtask().contains(subtask));
     }
 
     @Test
-    public void epicShouldChangeStatusDependingOnTheSubtasks() {
+    public void epicShouldChangeStatusDependingOnTheSubtasks() throws TimeConflictException, NotFoundException {
         manager.createSubtask(new Subtask("Имя", "Описание", TaskStatus.NEW,
                 LocalDateTime.of(2025, Month.SEPTEMBER, 12, 20, 10),
                 Duration.ofHours(8), epic.getId()));
@@ -131,12 +133,13 @@ public abstract class TaskManagerTest <T extends TaskManager> {
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
 
         manager.createSubtask(new Subtask("Имя", "Описание", TaskStatus.IN_PROGRESS,
-                LocalDateTime.now(), Duration.ofMinutes(40), epic.getId()));
+                LocalDateTime.of(2025, Month.OCTOBER, 22, 22, 0),
+                Duration.ofMinutes(40), epic.getId()));
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
     }
 
     @Test
-    public void tasksShouldNotOverlapOfExecutionTime() {
+    public void tasksShouldNotOverlapOfExecutionTime() throws TimeConflictException {
         Task taskWithDifferentTime = new Task("Имя", "Описание", TaskStatus.IN_PROGRESS,
                 LocalDateTime.of(2025, Month.SEPTEMBER, 25, 12, 40), Duration.ofHours(12));
         manager.createTask(taskWithDifferentTime);
@@ -145,7 +148,9 @@ public abstract class TaskManagerTest <T extends TaskManager> {
 
         Task taskWithSameTime = new Task("Имя", "Описание", TaskStatus.DONE,
                 task.getStartTime(), Duration.ofHours(4));
-        manager.createTask(taskWithSameTime);
+        assertThrows(TimeConflictException.class, () -> {
+                    manager.createTask(taskWithSameTime);
+                });
         assertEquals(2, manager.getAllTasks().size());
         assertFalse(manager.getAllTasks().contains(taskWithSameTime));
     }

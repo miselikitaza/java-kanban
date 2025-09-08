@@ -6,6 +6,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import exceptions.ManagerSaveException;
+import exceptions.NotFoundException;
+import exceptions.TimeConflictException;
 import tasks.Task;
 import tasks.Epic;
 import tasks.Subtask;
@@ -67,7 +70,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             for (Subtask subtask : manager.subtasks.values()) {
                 Epic epic = manager.epics.get(subtask.getEpicId());
                 if (epic != null) {
-                    epic.addSubtasks(subtask.getId());
+                    epic.addSubtask(subtask.getId());
                 }
             }
 
@@ -131,14 +134,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task createTask(Task task) {
+    public Task createTask(Task task) throws TimeConflictException {
         Task createdTask = super.createTask(task);
         save();
         return createdTask;
     }
 
     @Override
-    public Task updateTask(Task task) {
+    public Task updateTask(Task task) throws NotFoundException, TimeConflictException {
         Task updateTask = super.updateTask(task);
         save();
         return updateTask;
@@ -151,7 +154,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteTaskById(int id) {
+    public void deleteTaskById(int id) throws NotFoundException {
         super.deleteTaskById(id);
         save();
     }
@@ -164,7 +167,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Epic updateEpic(Epic epic) {
+    public Epic updateEpic(Epic epic) throws NotFoundException {
         Epic updatedEpic = super.updateEpic(epic);
         save();
         return updatedEpic;
@@ -177,20 +180,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteEpicById(int id) {
+    public void deleteEpicById(int id) throws NotFoundException {
         super.deleteEpicById(id);
         save();
     }
 
     @Override
-    public Subtask createSubtask(Subtask subtask) {
+    public Subtask createSubtask(Subtask subtask) throws TimeConflictException, NotFoundException {
         Subtask createdSubtask = super.createSubtask(subtask);
         save();
         return createdSubtask;
     }
 
     @Override
-    public Subtask updateSubtask(Subtask subtask) {
+    public Subtask updateSubtask(Subtask subtask) throws NotFoundException, TimeConflictException {
         Subtask updatedSubtask = super.updateSubtask(subtask);
         save();
         return updatedSubtask;
@@ -203,7 +206,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteSubtaskById(int id) {
+    public void deleteSubtaskById(int id) throws NotFoundException {
         super.deleteSubtaskById(id);
         save();
     }

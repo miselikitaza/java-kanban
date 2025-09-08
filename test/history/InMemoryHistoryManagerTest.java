@@ -2,6 +2,8 @@ package history;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import exceptions.NotFoundException;
+import exceptions.TimeConflictException;
 import manager.InMemoryTaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +25,7 @@ class InMemoryHistoryManagerTest {
     Subtask subtask;
 
     @BeforeEach
-    public void create() {
+    public void create() throws NotFoundException, TimeConflictException {
         historyManager = new InMemoryTaskManager();
         epic = new Epic("Эпик", "эпик");
         historyManager.createEpic(epic);
@@ -50,14 +52,14 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldRemoveTheTaskFromTheHistoryWhenWeDeleteTheTask() {
+    public void shouldRemoveTheTaskFromTheHistoryWhenWeDeleteTheTask() throws NotFoundException {
         historyManager.deleteTaskById(task1.getId());
         assertFalse(historyManager.getHistory().contains(task1));
         assertFalse(historyManager.getHistory().isEmpty());
     }
 
     @Test
-    public void shouldSaveTheTasksInTheOrderTheyWereAdded() {
+    public void shouldSaveTheTasksInTheOrderTheyWereAdded() throws NotFoundException {
         historyManager.getEpicById(epic.getId());
         assertEquals(historyManager.getHistory().getLast(), epic);
         historyManager.getTaskById(task2.getId());
@@ -66,7 +68,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldDeleteThePreviousTaskIfItsViewedASecondTimeAndPutItAtTheEndOfTheHistory() {
+    public void shouldDeleteThePreviousTaskIfItsViewedASecondTimeAndPutItAtTheEndOfTheHistory() throws NotFoundException {
         historyManager.getTaskById(task1.getId());
         assertEquals(historyManager.getHistory().getFirst(), task2);
         assertEquals(historyManager.getHistory().getLast(), task1);
@@ -74,7 +76,7 @@ class InMemoryHistoryManagerTest {
 
 
     @Test
-    public void shouldRemoveTheTaskFromTheHistoryWhenWeRemoveAllTasks() {
+    public void shouldRemoveTheTaskFromTheHistoryWhenWeRemoveAllTasks() throws NotFoundException {
         historyManager.getEpicById(epic.getId());
         historyManager.deleteAllTasks();
         assertFalse(historyManager.getHistory().contains(task1));
@@ -83,7 +85,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldRemoveASubtaskFromTheHistoryIfHerEpicIsRemoved() {
+    public void shouldRemoveASubtaskFromTheHistoryIfHerEpicIsRemoved() throws NotFoundException {
         historyManager.getEpicById(epic.getId());
         historyManager.getSubtaskById(subtask.getId());
         historyManager.deleteEpicById(epic.getId());

@@ -1,5 +1,1 @@
 id,type,name,status,description,startTime,duration,epic
-1,TASK,имя,NEW,описание,2025-10-10T12:12:00,1:00:00,
-2,EPIC,Имя,IN_PROGRESS,описание,2025-09-20T12:40:00,11:00:00,
-3,SUBTASK,имя,DONE,описание,2025-09-20T12:40:00,10:00:00,2
-4,SUBTASK,имя,NEW,описание,2025-09-25T12:00:00,1:00:00,2
