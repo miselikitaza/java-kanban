@@ -63,7 +63,7 @@ public class TaskHandler extends BaseHttpHandler {
             IOException, TimeConflictException {
 
         switch (method) {
-            case "GET":
+            case GET:
                 if (id != -1) {
                     Task task = manager.getTaskById(id);
                     sendText(exchange, gson.toJson(task), 200);
@@ -73,7 +73,7 @@ public class TaskHandler extends BaseHttpHandler {
                 }
                 break;
 
-            case "POST":
+            case POST:
                 String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                 Task task = gson.fromJson(body, Task.class);
 
@@ -87,7 +87,7 @@ public class TaskHandler extends BaseHttpHandler {
                 }
                 break;
 
-            case "DELETE":
+            case DELETE:
                 if (id != -1) {
                     manager.deleteTaskById(id);
                     sendText(exchange, "Задача удалена", 200);
@@ -106,7 +106,7 @@ public class TaskHandler extends BaseHttpHandler {
     private void handleSubtaskOperations(HttpExchange exchange, String method, Integer id) throws IOException, NotFoundException, TimeConflictException {
 try {
     switch (method) {
-        case "GET":
+        case GET:
             if (id != -1) {
                 Subtask subtask = manager.getSubtaskById(id);
                 sendText(exchange, gson.toJson(subtask), 200);
@@ -116,7 +116,7 @@ try {
             }
             break;
 
-        case "POST":
+        case POST:
             String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
             Subtask subtask = gson.fromJson(body, Subtask.class);
 
@@ -130,7 +130,7 @@ try {
             }
             break;
 
-        case "DELETE":
+        case DELETE:
             if (id != -1) {
                 manager.deleteSubtaskById(id);
                 sendText(exchange, "Подзадача удалена", 200);
@@ -157,7 +157,7 @@ try {
             IOException {
 
         switch (method) {
-            case "GET":
+            case GET:
                 if (id != -1) {
                     Epic epic = manager.getEpicById(id);
                     sendText(exchange, gson.toJson(epic), 200);
@@ -167,7 +167,7 @@ try {
                 }
                 break;
 
-            case "POST":
+            case POST:
                 String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                 Epic epic = gson.fromJson(body, Epic.class);
                 if (id != -1) {
@@ -180,7 +180,7 @@ try {
                 }
                 break;
 
-            case "DELETE":
+            case DELETE:
                 if (id != -1) {
                     manager.deleteEpicById(id);
                     sendText(exchange, "Эпик удален", 200);
