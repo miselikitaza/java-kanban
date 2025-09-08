@@ -9,7 +9,11 @@ import java.nio.charset.StandardCharsets;
 
 public abstract class BaseHttpHandler implements HttpHandler {
 
-    protected final Gson gson = GsonAdapters.createGson();
+    protected static Gson gson = GsonAdapters.createGson();
+    protected static final String GET = "GET";
+    protected static final String POST = "POST";
+    protected static final String DELETE = "DELETE";
+
 
     @Override
     public abstract void handle(HttpExchange exchange) throws IOException;
